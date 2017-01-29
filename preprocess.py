@@ -45,6 +45,11 @@ def random_rotation(image, steer_value, angle_range=20, steer_multiplier=1.5):
     new_steering = threshold_steering(angle/90 * steer_multiplier) * -1
     return new_image, new_steering
 
+def random_flip(image, steer_value):
+    if np.random.uniform() >= 0.5:
+        return cv2.flip(image, 1), -steer_value
+    return image, steer_value
+
 def random_brightness(image, a=0.2, b=1.5, return_hsv=True):
     hsv = bgr_to_hsv(image)
     factor = np.random.uniform(a, b)
