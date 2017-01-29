@@ -68,7 +68,7 @@ def get_model(im_shape=(66, 200, 3)):
     
     model.add(Convolution2D(64, 3, 3, subsample=(1, 1), border_mode='valid', init='glorot_uniform'))
     model.add(Flatten())
-    model.add(Dropout(0.2))
+    model.add(Dropout(0.5))
     model.add(ELU())
     
     model.add(Dense(50))
@@ -77,6 +77,7 @@ def get_model(im_shape=(66, 200, 3)):
     
     model.add(Dense(10))
     model.add(ELU())
+    model.add(Dropout(0.2))
     
     model.add(Dense(1))
     
