@@ -1,9 +1,12 @@
 import argparse
+import numpy as np
+import pandas as pd
+import cv2
 from keras.models import Sequential
 from keras.layers import Convolution2D, ELU, Lambda, Dropout, Flatten, Dense
-from keras.callbacks import EarlyStopping, ModelCheckpoint, 
+from keras.callbacks import EarlyStopping, ModelCheckpoint
 from sklearn.model_selection import train_test_split
-from data import load_data, shift_steering, generate
+from sklearn.utils import shuffle
 from preprocess import preprocess_train, preprocess_test
 
 
@@ -17,7 +20,6 @@ def load_data(data_folders):
         dfs.append(df.copy())
     return pd.concat(dfs, ignore_index=True)
 
-
 def shift_steering(df, shift_value=0.25):
     center = df[['center', 'steering']].rename(columns={'center': 'image_path'})
     left = df[['left', 'steering']].rename(columns={'left': 'image_path'})
@@ -25,7 +27,6 @@ def shift_steering(df, shift_value=0.25):
     left['steering'] = np.minimum(left['steering'] + shift_value, 1.)
     right['steering'] = np.maximum(right['steering'] - shift_value, -1.)
     return pd.concat((center, left, right), ignore_index=True)
-
 
 def generate(df, preprocess_f, batch_size=128):
     X, y = [], []
@@ -40,7 +41,6 @@ def generate(df, preprocess_f, batch_size=128):
             if len(X) >= batch_size:
                 yield np.vstack(X), np.array(y)
                 X, y = [], []
-
 
 def get_model(im_shape=(66, 200, 3)):
     """
@@ -80,7 +80,7 @@ def get_model(im_shape=(66, 200, 3)):
     
     model.add(Dense(1))
     
-    model.compile(optimizer="adam", loss="mse", metrics=["accuracy"])
+    model.compile(optimizer="adam", loss="mse")
 
     return model
 
@@ -88,18 +88,18 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Steering angle model')
     parser.add_argument('--data', nargs='+', default=['./data/sim_data/','./data/udacity_data/'], 
                         help='Directories from which to load driving data')
-    parser.add_argument('--epochs', type=int, default=30, help='Number of epochs.')
+    parser.add_argument('--epochs', type=int, default=15, help='Number of epochs.')
     parser.add_argument('--valid-split', type=float, default=0.25, help='Portion of total dataset to split for validation set')
-    parser.add_argument('--train-size', type=int, default=40000, help='Number of training samples per epoch.')
-    parser.add_argument('--valid-size', type=int, default=4000, help='Number of validation samples per epoch.')
+    parser.add_argument('--train-size', type=int, default=40064, help='Number of training samples per epoch.')
+    parser.add_argument('--valid-size', type=int, default=4096, help='Number of validation samples per epoch.')
     args = parser.parse_args()
     
     df = load_data(args.data)
     df = shift_steering(df)
     df_train, df_valid = train_test_split(df, test_size=args.valid_split)
     
-    print('{} training examples'.format(data_train.shape[0]))
-    print('{} validation examples'.format(data_valid.shape[0]))
+    print('{} training examples'.format(df_train.shape[0]))
+    print('{} validation examples'.format(df_valid.shape[0]))
     
     model = get_model()
     model_name = 'model'
@@ -117,7 +117,7 @@ if __name__ == "__main__":
     # model training and evaluation against validation set
     model.fit_generator(train_gen, 
                         samples_per_epoch=args.train_size, 
-                        nb_epochs=args.epochs,
+                        nb_epoch=args.epochs,
                         validation_data=valid_gen, 
                         nb_val_samples=args.valid_size,
                         callbacks=[stop, checkpoint])
@@ -128,7 +128,7 @@ if __name__ == "__main__":
     with open('./{}.json'.format(model_name), 'w') as f:
         f.write(model.to_json())
         
-    model.save_weights('./{}.h5', True)
+    model.save_weights('./{}.h5'.format(model_name), True)
     
     
     
