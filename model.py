@@ -1,3 +1,4 @@
+import datetime
 import argparse
 import numpy as np
 import pandas as pd
@@ -56,20 +57,24 @@ def get_model(im_shape=(66, 200, 3)):
     
     model.add(Convolution2D(25, 5, 5, subsample=(2, 2), border_mode='valid', init='glorot_uniform'))
     model.add(ELU())
+    model.add(Dropout(0.1))
     
     model.add(Convolution2D(36, 5, 5, subsample=(2, 2), border_mode='valid', init='glorot_uniform'))
     model.add(ELU())
-    
+    model.add(Dropout(0.1))
+
     model.add(Convolution2D(48, 5, 5, subsample=(2, 2), border_mode='valid', init='glorot_uniform'))
     model.add(ELU())
+    model.add(Dropout(0.1))
+ 
+    model.add(Convolution2D(64, 3, 3, subsample=(1, 1), border_mode='valid', init='glorot_uniform'))
+    model.add(ELU())
+    model.add(Dropout(0.2))
     
     model.add(Convolution2D(64, 3, 3, subsample=(1, 1), border_mode='valid', init='glorot_uniform'))
     model.add(ELU())
-    
-    model.add(Convolution2D(64, 3, 3, subsample=(1, 1), border_mode='valid', init='glorot_uniform'))
+    model.add(Dropout(0.2))
     model.add(Flatten())
-    model.add(Dropout(0.5))
-    model.add(ELU())
     
     model.add(Dense(50))
     model.add(ELU())
@@ -77,7 +82,6 @@ def get_model(im_shape=(66, 200, 3)):
     
     model.add(Dense(10))
     model.add(ELU())
-    model.add(Dropout(0.2))
     
     model.add(Dense(1))
     
@@ -89,10 +93,11 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Steering angle model')
     parser.add_argument('--data', nargs='+', default=['./data/sim_data/','./data/udacity_data/'], 
                         help='Directories from which to load driving data')
-    parser.add_argument('--epochs', type=int, default=15, help='Number of epochs.')
+    parser.add_argument('--epochs', type=int, default=25, help='Number of epochs.')
     parser.add_argument('--valid-split', type=float, default=0.25, help='Portion of total dataset to split for validation set')
     parser.add_argument('--train-size', type=int, default=40064, help='Number of training samples per epoch.')
-    parser.add_argument('--valid-size', type=int, default=4096, help='Number of validation samples per epoch.')
+    parser.add_argument('--valid-size', type=int, default=8192, help='Number of validation samples per epoch.')
+    parser.add_argument('--load', default=None, help='Weights to load')
     args = parser.parse_args()
     
     df = load_data(args.data)
@@ -103,7 +108,12 @@ if __name__ == "__main__":
     print('{} validation examples'.format(df_valid.shape[0]))
     
     model = get_model()
-    model_name = 'model'
+    model_name = 'model-' + datetime.datetime.now()
+    print('Model name: ' + model_name)
+    
+    # load previous weights if specified
+    if args.load:
+        model.load_weights(args.load)
     
     # callbacks
     stop = EarlyStopping(monitor='val_loss', min_delta=0, patience=3, verbose=0, mode='min')
