@@ -30,14 +30,14 @@ def threshold_steering(steer_value):
         return 1
     return steer_value
 
-def random_translation(image, steer_value, trans_range, steer_adjust=0.01):
+def random_translation(image, steer_value, trans_range, steer_adjust=0.0075):
     x_shift = trans_range * np.random.uniform() - trans_range/2
     M = np.float32([[1, 0, x_shift], [0, 1, 0]])
     new_image = cv2.warpAffine(image, M, (image.shape[1], image.shape[0]))
     new_steering = threshold_steering(steer_value + steer_adjust * x_shift)
     return new_image, new_steering
 
-def random_rotation(image, steer_value, angle_range, steer_multiplier=1.5):
+def random_rotation(image, steer_value, angle_range, steer_multiplier=1.):
     r, c, _ = image.shape
     angle = np.random.uniform(angle_range) - angle_range/2
     M = cv2.getRotationMatrix2D((c/2, r/2), -angle, 1.0) # angle is negated because it's more intuitive (i.e. positive == clockwise)
