@@ -30,7 +30,7 @@ def threshold_steering(steer_value):
         return 1
     return steer_value
 
-def random_translation(image, steer_value, trans_range, steer_adjust=0.01):
+def random_translation(image, steer_value, trans_range, steer_adjust=0.009):
     x_shift = trans_range * np.random.uniform() - trans_range/2
     M = np.float32([[1, 0, x_shift], [0, 1, 0]])
     new_image = cv2.warpAffine(image, M, (image.shape[1], image.shape[0]))
@@ -58,7 +58,7 @@ def random_brightness(image, a=0.2, b=1.5, return_hsv=True):
         return hsv
     return hsv_to_bgr(hsv)
 
-def preprocess_train(image, steer_value, trans_range=40, angle_range=20):
+def preprocess_train(image, steer_value, trans_range=50, angle_range=26):
     image, steer_value = random_translation(image, steer_value, trans_range)
     image, steer_value = random_rotation(image, steer_value, angle_range)
     image, steer_value = random_flip(image, steer_value)
@@ -67,7 +67,7 @@ def preprocess_train(image, steer_value, trans_range=40, angle_range=20):
     image = resize(image, 200, 66)
     return image, steer_value
 
-def preprocess_test(image, steer_value, rgb=False, trans_range=40):
+def preprocess_test(image, steer_value, rgb=False, trans_range=50):
     if rgb:
         image = rgb_to_hsv(image)
     else:

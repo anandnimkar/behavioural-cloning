@@ -57,19 +57,15 @@ def get_model(im_shape=(66, 200, 3)):
     
     model.add(Convolution2D(25, 5, 5, subsample=(2, 2), border_mode='valid', init='glorot_uniform'))
     model.add(ELU())
-    model.add(Dropout(0.1))
     
     model.add(Convolution2D(36, 5, 5, subsample=(2, 2), border_mode='valid', init='glorot_uniform'))
     model.add(ELU())
-    model.add(Dropout(0.1))
 
     model.add(Convolution2D(48, 5, 5, subsample=(2, 2), border_mode='valid', init='glorot_uniform'))
     model.add(ELU())
-    model.add(Dropout(0.1))
  
     model.add(Convolution2D(64, 3, 3, subsample=(1, 1), border_mode='valid', init='glorot_uniform'))
     model.add(ELU())
-    model.add(Dropout(0.2))
     
     model.add(Convolution2D(64, 3, 3, subsample=(1, 1), border_mode='valid', init='glorot_uniform'))
     model.add(ELU())
@@ -97,7 +93,7 @@ if __name__ == "__main__":
     parser.add_argument('--valid-split', type=float, default=0.25, help='Portion of total dataset to split for validation set')
     parser.add_argument('--train-size', type=int, default=40064, help='Number of training samples per epoch.')
     parser.add_argument('--valid-size', type=int, default=8192, help='Number of validation samples per epoch.')
-    parser.add_argument('--load', default=None, help='Weights to load')
+    parser.add_argument('--load-h5', default=None, help='Weights to load')
     args = parser.parse_args()
     
     df = load_data(args.data)
@@ -108,18 +104,17 @@ if __name__ == "__main__":
     print('{} validation examples'.format(df_valid.shape[0]))
     
     model = get_model()
-    model_name = 'model_' + datetime.datetime.now().isoformat()
+    model_name = 'model_' + datetime.datetime.now().strftime('%Y-&m-%dT%H-%M-%S')
     print('Model name: ' + model_name)
     
     # load previous weights if specified
-    if args.load:
-        model.load_weights(args.load)
+    if args.load_h5:
+        model.load_weights(args.load_h5, by_name=True)
     
     # callbacks
-    stop = EarlyStopping(monitor='val_loss', min_delta=0, patience=3, verbose=0, mode='min')
-    checkpoint = ModelCheckpoint(filepath='checkpoints/' + model_name + '.{epoch:02d}-{val_loss:.4f}',
-                                 monitor='val_loss', save_best_only=True, mode='min', save_weights_only=False)
-    
+    stop = EarlyStopping(monitor='val_loss', min_delta=0, patience=2, verbose=1, mode='min')
+    checkpoint = ModelCheckpoint(filepath='checkpoints/' + model_name + '_epoch:{epoch:02d}-val_loss:{val_loss:.4f}.h5',
+                                 monitor='val_loss', verbose=1, save_best_only=True, mode='min', save_weights_only=False)                    
     # generators
     train_gen = generate(df_train, preprocess_f=preprocess_train)
     valid_gen = generate(df_valid, preprocess_f=preprocess_test)
