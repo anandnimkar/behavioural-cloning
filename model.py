@@ -57,23 +57,18 @@ def get_model(im_shape=(66, 200, 3)):
     
     model.add(Convolution2D(25, 5, 5, subsample=(2, 2), border_mode='valid', init='glorot_uniform'))
     model.add(ELU())
-    model.add(Dropout(0.1))
 
     model.add(Convolution2D(36, 5, 5, subsample=(2, 2), border_mode='valid', init='glorot_uniform'))
     model.add(ELU())
-    model.add(Dropout(0.1))
 
     model.add(Convolution2D(48, 5, 5, subsample=(2, 2), border_mode='valid', init='glorot_uniform'))
     model.add(ELU())
-    model.add(Dropout(0.1))
  
     model.add(Convolution2D(64, 3, 3, subsample=(1, 1), border_mode='valid', init='glorot_uniform'))
     model.add(ELU())
-    model.add(Dropout(0.1))
     
     model.add(Convolution2D(64, 3, 3, subsample=(1, 1), border_mode='valid', init='glorot_uniform'))
-    model.add(ELU())
-    model.add(Dropout(0.2))
+    model.add(ELU())    
     model.add(Flatten())
     
     model.add(Dense(100))

@@ -58,7 +58,7 @@ def random_brightness(image, a=0.2, b=1.5, return_hsv=True):
         return hsv
     return hsv_to_bgr(hsv)
 
-def preprocess_train(image, steer_value, trans_range=50, angle_range=26):
+def preprocess_train(image, steer_value, trans_range=40, angle_range=20):
     image, steer_value = random_translation(image, steer_value, trans_range)
     image, steer_value = random_rotation(image, steer_value, angle_range)
     image, steer_value = random_flip(image, steer_value)
@@ -67,7 +67,7 @@ def preprocess_train(image, steer_value, trans_range=50, angle_range=26):
     image = resize(image, 200, 66)
     return image, steer_value
 
-def preprocess_test(image, steer_value, rgb=False, trans_range=50):
+def preprocess_test(image, steer_value, rgb=False, trans_range=40):
     if rgb:
         image = rgb_to_hsv(image)
     else:
