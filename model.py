@@ -104,7 +104,7 @@ if __name__ == "__main__":
     print('{} validation examples'.format(df_valid.shape[0]))
     
     model = get_model()
-    model_name = 'model_' + datetime.datetime.now().strftime('%Y-&m-%dT%H-%M-%S')
+    model_name = 'model_' + datetime.datetime.now().strftime('%Y-%m-%dT%H-%M-%S')
     print('Model name: ' + model_name)
     
     # load previous weights if specified
