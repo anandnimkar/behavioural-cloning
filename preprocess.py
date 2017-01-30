@@ -63,7 +63,7 @@ def preprocess_train(image, steer_value, trans_range=40, angle_range=20):
     image, steer_value = random_rotation(image, steer_value, angle_range)
     image, steer_value = random_flip(image, steer_value)
     image = random_brightness(image)
-    image = crop_roi(image, 35, 135, int(trans_range/2), int(image.shape[1] - trans_range/2))
+    image = crop_roi(image, 20, 135, int(trans_range/2), int(image.shape[1] - trans_range/2))
     image = resize(image, 200, 66)
     return image, steer_value
 
@@ -72,7 +72,7 @@ def preprocess_test(image, steer_value, rgb=False, trans_range=40):
         image = rgb_to_hsv(image)
     else:
         image = bgr_to_hsv(image)
-    image = crop_roi(image, 35, 135, int(trans_range/2), int(image.shape[1] - trans_range/2))
+    image = crop_roi(image, 20, 135, int(trans_range/2), int(image.shape[1] - trans_range/2))
     image = resize(image, 200, 66)
     return image, steer_value
     
