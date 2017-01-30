@@ -57,20 +57,28 @@ def get_model(im_shape=(66, 200, 3)):
     
     model.add(Convolution2D(25, 5, 5, subsample=(2, 2), border_mode='valid', init='glorot_uniform'))
     model.add(ELU())
-    
+    model.add(Dropout(0.1))
+
     model.add(Convolution2D(36, 5, 5, subsample=(2, 2), border_mode='valid', init='glorot_uniform'))
     model.add(ELU())
+    model.add(Dropout(0.1))
 
     model.add(Convolution2D(48, 5, 5, subsample=(2, 2), border_mode='valid', init='glorot_uniform'))
     model.add(ELU())
+    model.add(Dropout(0.1))
  
     model.add(Convolution2D(64, 3, 3, subsample=(1, 1), border_mode='valid', init='glorot_uniform'))
     model.add(ELU())
+    model.add(Dropout(0.1))
     
     model.add(Convolution2D(64, 3, 3, subsample=(1, 1), border_mode='valid', init='glorot_uniform'))
     model.add(ELU())
     model.add(Dropout(0.2))
     model.add(Flatten())
+    
+    model.add(Dense(100))
+    model.add(ELU())
+    model.add(Dropout(0.2))
     
     model.add(Dense(50))
     model.add(ELU())
@@ -113,7 +121,7 @@ if __name__ == "__main__":
     
     # callbacks
     stop = EarlyStopping(monitor='val_loss', min_delta=0, patience=2, verbose=1, mode='min')
-    checkpoint = ModelCheckpoint(filepath='checkpoints/' + model_name + '_epoch:{epoch:02d}-val_loss:{val_loss:.4f}.h5',
+    checkpoint = ModelCheckpoint(filepath='checkpoints/' + model_name + '_epoch-{epoch:02d}_val_loss-{val_loss:.4f}.h5',
                                  monitor='val_loss', verbose=1, save_best_only=True, mode='min', save_weights_only=False)                    
     # generators
     train_gen = generate(df_train, preprocess_f=preprocess_train)
