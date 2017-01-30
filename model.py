@@ -136,10 +136,10 @@ if __name__ == "__main__":
     # saving model
     print('Saving weights and model')
     
-    with open('./{}.json'.format(model_name), 'w') as f:
+    with open('./saved/{}.json'.format(model_name), 'w') as f:
         f.write(model.to_json())
         
-    model.save_weights('./{}.h5'.format(model_name), True)
+    model.save_weights('./saved/{}.h5'.format(model_name), True)
     
     
     
