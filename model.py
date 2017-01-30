@@ -29,7 +29,7 @@ def shift_steering(df, shift_value=0.25):
     right['steering'] = np.maximum(right['steering'] - shift_value, -1.)
     return pd.concat((center, left, right), ignore_index=True)
 
-def generate(df, preprocess_f, batch_size=128):
+def generate(df, preprocess_f, batch_size=341):
     X, y = [], []
     while 1:
         df = shuffle(df)
@@ -57,29 +57,34 @@ def get_model(im_shape=(66, 200, 3)):
     
     model.add(Convolution2D(25, 5, 5, subsample=(2, 2), border_mode='valid', init='glorot_uniform'))
     model.add(ELU())
-
+    model.add(Dropout(0.2))
+  
     model.add(Convolution2D(36, 5, 5, subsample=(2, 2), border_mode='valid', init='glorot_uniform'))
     model.add(ELU())
+    model.add(Dropout(0.2))
 
     model.add(Convolution2D(48, 5, 5, subsample=(2, 2), border_mode='valid', init='glorot_uniform'))
     model.add(ELU())
- 
+    model.add(Dropout(0.2))
+
     model.add(Convolution2D(64, 3, 3, subsample=(1, 1), border_mode='valid', init='glorot_uniform'))
     model.add(ELU())
+    model.add(Dropout(0.2))
     
     model.add(Convolution2D(64, 3, 3, subsample=(1, 1), border_mode='valid', init='glorot_uniform'))
-    model.add(Flatten())
+    model.add(ELU())
     model.add(Dropout(0.2))
-    model.add(ELU())    
+
+    model.add(Flatten())
     
     model.add(Dense(100))
-    model.add(Dropout(0.2))
     model.add(ELU())
+    model.add(Dropout(0.2))
     
     model.add(Dense(50))
-    model.add(Dropout(0.2))
     model.add(ELU())
-       
+    model.add(Dropout(0.2))
+
     model.add(Dense(10))
     model.add(ELU())
     
@@ -95,8 +100,8 @@ if __name__ == "__main__":
                         help='Directories from which to load driving data')
     parser.add_argument('--epochs', type=int, default=25, help='Number of epochs.')
     parser.add_argument('--valid-split', type=float, default=0.25, help='Portion of total dataset to split for validation set')
-    parser.add_argument('--train-size', type=int, default=40064, help='Number of training samples per epoch.')
-    parser.add_argument('--valid-size', type=int, default=8192, help='Number of validation samples per epoch.')
+    parser.add_argument('--train-size', type=int, default=96162, help='Number of training samples per epoch.')
+    parser.add_argument('--valid-size', type=int, default=32054, help='Number of validation samples per epoch.')
     parser.add_argument('--load-h5', default=None, help='Weights to load')
     args = parser.parse_args()
     
@@ -116,7 +121,7 @@ if __name__ == "__main__":
         model.load_weights(args.load_h5, by_name=True)
     
     # callbacks
-    stop = EarlyStopping(monitor='val_loss', min_delta=0, patience=2, verbose=1, mode='min')
+    stop = EarlyStopping(monitor='val_loss', min_delta=0, patience=3, verbose=1, mode='min')
     checkpoint = ModelCheckpoint(filepath='checkpoints/' + model_name + '_epoch-{epoch:02d}_val_loss-{val_loss:.4f}.h5',
                                  monitor='val_loss', verbose=1, save_best_only=True, mode='min', save_weights_only=False)                    
     # generators
