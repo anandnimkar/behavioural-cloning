@@ -42,7 +42,7 @@ def random_rotation(image, steer_value, angle_range, steer_multiplier=1.):
     angle = np.random.uniform(angle_range) - angle_range/2
     M = cv2.getRotationMatrix2D((c/2, r/2), -angle, 1.0) # angle is negated because it's more intuitive (i.e. positive == clockwise)
     new_image = cv2.warpAffine(image, M, (c, r), flags=cv2.INTER_LINEAR)
-    new_steering = threshold_steering(steer_value + (angle/90 * steer_multiplier))
+    new_steering = threshold_steering(steer_value + (angle/180 * steer_multiplier))
     return new_image, new_steering
 
 def random_flip(image, steer_value):
