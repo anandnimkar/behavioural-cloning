@@ -30,7 +30,7 @@ def threshold_steering(steer_value):
         return 1
     return steer_value
 
-def random_translation(image, steer_value, trans_range, steer_adjust=0.01):
+def random_translation(image, steer_value, trans_range, steer_adjust=0.0075):
     x_shift = trans_range * np.random.uniform() - trans_range/2
     M = np.float32([[1, 0, x_shift], [0, 1, 0]])
     new_image = cv2.warpAffine(image, M, (image.shape[1], image.shape[0]))
@@ -50,7 +50,7 @@ def random_flip(image, steer_value):
         return cv2.flip(image, 1), -steer_value
     return image, steer_value
 
-def random_brightness(image, a=0.2, b=1.5, return_hsv=True):
+def random_brightness(image, a=0.15, b=1.5, return_hsv=True):
     hsv = bgr_to_hsv(image)
     factor = np.random.uniform(a, b)
     hsv[...,2] = np.minimum(hsv[...,2] * factor, 255)
