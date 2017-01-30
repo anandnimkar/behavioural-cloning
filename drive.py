@@ -41,7 +41,7 @@ def telemetry(sid, data):
     image_array = np.asarray(image)
     
     # Preprocessing of image
-    image_array, _ = preprocess_test(image_array, steering_angle)
+    image_array, _ = preprocess_test(image_array, steering_angle, rgb=True)
     
     transformed_image_array = image_array[None, :, :, :]
     # This model currently assumes that the features of the model are just the images. Feel free to change this.
