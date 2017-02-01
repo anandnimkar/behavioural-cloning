@@ -14,9 +14,11 @@ The objective of this project was to develop a model to clone human driving beha
 The Udacity simulator provides two tracks to experiment with both generating training data and evaluating the autonomous driving predictions of the model. For this model, training data was only recorded on track 1 of the simulator. Track 2 was reserved for evaluating the trained model's ability to generalize to a new track with completely different colours, lane markings, hills, turns, and other features.
 
 Track 1 screenshot:
+
 ![Track 1](./media/simulator_track1.png)
 
 Track 2 screenshot:
+
 ![Track 2](./media/simulator_track2.png)
 
 Training data is recorded by the driving simulator as a set of 160x320 RGB images, three per frame, from three forward-facing cameras sitting left, center, and right on the vehicle's hood. Each frame (set of three images) is labelled with the vehicle's steering angle, throttle value, and brake value recorded from the human inputs.
@@ -29,9 +31,11 @@ The captured steering angle for a given frame is initially the same for the left
 A visualization of the steering angles before and after this adjustment is presented below:
 
 Before adjustment:
+
 ![Before Adjustment](./media/before_adjustment.png)
 
 After adjustment:
+
 ![After Adjustment](./media/after_adjustment.png)
 
 #### Jittering of Training Data and Resizing of Images
@@ -40,6 +44,7 @@ Each image underwent random translation, rotation, and brightness adjustment, wh
 The histogram of the calculated steering position for a sample of 10,000 jittered images is presented below, along with example before and after images. As you can see, Jittering helped to flatten the distribution of steering positions.
 
 Jittered steering positions (10,000 image sample):
+
 ![Jittered Steering](./media/jittered.png)
 
 Note that images were cropped to a region of interest and resized to 66x200 pixels in line with the model architecture described below.
@@ -47,9 +52,11 @@ Note that images were cropped to a region of interest and resized to 66x200 pixe
 An example image before and after jittering and cropping is presented below.
 
 Before:
+
 ![Before Preprocessing](./media/before.jpg)
 
 After:
+
 ![After Preprocessing](./media/after.png)
 
 Validation and Test data (live input from the simulator) was not jittered.
@@ -64,6 +71,7 @@ Validation data was randomly split at 25% of the total samples.
 A Convolutional Neural Network architecture was used that was heavily influenced by both the Nvidia and Comma.ai papers referenced above. Implementation of this model was done in Keras with Tensorflow as a backend. Training was performed on an AWS p2.xlarge instance.
 
 Nvidia CNN architecture used. The size of each layer is specified.
+
 ![Nvidia CNN architecture](./media/Nvidia CNN.png)
 
 Key parts to the model:
