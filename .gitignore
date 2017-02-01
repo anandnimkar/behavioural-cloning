@@ -3,3 +3,5 @@ nohup.out
 data.zip
 .ipynb_checkpoints/
 __pycache__/
+saved/
+checkpoints/
