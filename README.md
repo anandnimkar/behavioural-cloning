@@ -33,7 +33,7 @@ One consideration in creating the training data was to train the car to return t
 
 2. The approach documented in the Nvidia paper referenced above was followed. 
 
-  The captured steering angle for a given frame is initially the same for the left, center, and right images. To train the vehicle to steer towards the center of each lane, the labels for the left and right images were adjusted by +0.25 and -0.25 respectively.
+  The captured steering angle for a given frame is initially the same for the left, center, and right images coming from the three cameras. To train the vehicle to steer towards the center of each lane, the labels for the left and right images were artificially adjusted by +0.25 and -0.25 respectively.
 
   Visualizations of the steering angles before and after adjustments is presented below:
 
@@ -44,6 +44,8 @@ One consideration in creating the training data was to train the car to return t
   After adjustment:
 
   ![After Adjustment](./media/after_adjustment.png)
+  
+  This would create training data that would suggest to steer the car away from lane boundaries.
 
 #### Jittering of Training Data and Resizing of Images
 Each image underwent random translation, rotation, and brightness adjustment, which also required adjusting the labelled steering angle given the extent of translation or rotation (e.g., 0.01 steering position adjustment for every pixel of translation).
