@@ -25,18 +25,25 @@ Training data is recorded by the driving simulator as a set of 160x320 RGB image
 
 The total dataset size used to train and validate the model was 104,109 images, representing the left, center, and right images captured for each frame in the simulator on track 1 only.
 
-#### Steering adjustment
-The captured steering angle for a given frame is initially the same for the left, center, and right images. Following the approach documented in the Nvidia paper referenced above, to train the vehicle to steer towards the center of each lane, the labels for the left and right images are adjusted by +0.25 and -0.25 respectively.
+#### Recovery to the Center of the Lane
 
-A visualization of the steering angles before and after this adjustment is presented below:
+One consideration in creating the training data was to train the car to return to the center of the lane if it drifted to the side of road. To address this, two approaches were used and described below:
 
-Before adjustment:
+1. Recording was performed of the human driver steering the car away from the lane boundaries to the centre of the lane during several portions of the track. This would generate training examples of this type of maneuveur.
 
-![Before Adjustment](./media/before_adjustment.png)
+2. The approach documented in the Nvidia paper referenced above was followed. 
 
-After adjustment:
+  The captured steering angle for a given frame is initially the same for the left, center, and right images. To train the vehicle to steer towards the center of each lane, the labels for the left and right images were adjusted by +0.25 and -0.25 respectively.
 
-![After Adjustment](./media/after_adjustment.png)
+  Visualizations of the steering angles before and after adjustments is presented below:
+
+  Before adjustment:
+
+  ![Before Adjustment](./media/before_adjustment.png)
+
+  After adjustment:
+
+  ![After Adjustment](./media/after_adjustment.png)
 
 #### Jittering of Training Data and Resizing of Images
 Each image underwent random translation, rotation, and brightness adjustment, which also required adjusting the labelled steering angle given the extent of translation or rotation (e.g., 0.01 steering position adjustment for every pixel of translation).
